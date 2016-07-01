@@ -28,12 +28,15 @@ public class MainActivity extends AppCompatActivity {
         long newHabitId = mDbHelper.insertHabit(newHabitValues);
         dbUpdates.append("\nNew element created with ID: " + String.valueOf(newHabitId));
 
-        //Remove element in DB
-        mDbHelper.removeElement(2);
-
         //Update habits where name like "Run"
-        int updatedRows = mDbHelper.updateByName("Run run!", 4);
+        int updatedRows = mDbHelper.updateNameById("Run run!", 4);
         dbUpdates.append("\nNew element updated: " + String.valueOf(updatedRows));
+
+        //Remove element in DB
+        mDbHelper.removeHabit(2);
+
+        //Show all the elements
+        mDbHelper.showAllHabits();
 
         tvUpdates.setText(dbUpdates.toString());
 

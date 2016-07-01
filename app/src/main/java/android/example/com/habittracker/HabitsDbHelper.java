@@ -2,6 +2,7 @@ package android.example.com.habittracker;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -20,7 +21,7 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
                     HabitsContract.Habit.COLUMN_NAME_HABIT + TEXT_TYPE + COMMA_SEP +
                     HabitsContract.Habit.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     HabitsContract.Habit.COLUMN_NAME_DATE + TIMESTAMP_TYPE +
-            " )";
+                    " )";
 
     private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + HabitsContract.Habit.TABLE_NAME;
 
@@ -37,13 +38,18 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //Remove the table (Just for testing purposes)
+        db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
+
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    // Insert the new row, returning the primary key value of the new row
+    /**
+     * Insert the new row, returning the primary key value of the new row
+     */
     public long insertHabit(ContentValues values) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -57,24 +63,17 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
         return newRowId;
     }
 
-    //Delete specific element from a Database
-    public void removeElement(int rowId) {
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        String selection = HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " LIKE ?";
-        String[] selectionArgs = { String.valueOf(rowId) };
-        db.delete(HabitsContract.Habit.TABLE_NAME, selection, selectionArgs);
-
-    }
-
-    public int updateByName(String name, int rowId) {
+    /**
+     * Update specific element from a Database
+     */
+    public int updateNameById(String name, int rowId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(HabitsContract.Habit.COLUMN_NAME_HABIT, name);
 
         String selection = HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " LIKE ?";
-        String[] selectionArgs = { String.valueOf(rowId) };
+        String[] selectionArgs = {String.valueOf(rowId)};
 
         int count = db.update(
                 HabitsContract.Habit.TABLE_NAME,
@@ -83,7 +82,45 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
                 selectionArgs);
 
         return count;
+    }
 
+    /**
+     * Delete specific element from a Database
+     */
+    public void removeHabit(int rowId) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " LIKE ?";
+        String[] selectionArgs = {String.valueOf(rowId)};
+        db.delete(HabitsContract.Habit.TABLE_NAME, selection, selectionArgs);
+
+    }
+
+    /**
+     * Fetch all habits stored in database
+     */
+    public void showAllHabits() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                HabitsContract.Habit._ID,
+                HabitsContract.Habit.COLUMN_NAME_HABIT,
+                HabitsContract.Habit.COLUMN_NAME_DESCRIPTION,
+        };
+
+        String sortOrder =
+                HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " DESC";
+
+        Cursor c = db.query(
+                HabitsContract.Habit.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
     }
 }
 
