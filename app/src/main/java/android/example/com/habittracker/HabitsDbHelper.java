@@ -90,12 +90,10 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
      * Delete specific element from a Database
      */
     public void removeHabitById(int rowId) {
-
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(rowId)};
         db.delete(HabitsContract.Habit.TABLE_NAME, selection, selectionArgs);
-
     }
 
     /**
@@ -111,7 +109,7 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
         };
 
         String sortOrder =
-                HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " DESC";
+                HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " ASC";
 
         Cursor c = db.query(
                 HabitsContract.Habit.TABLE_NAME,
@@ -126,7 +124,9 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
         return c;
     }
 
-
+    /**
+     * Remove all the elements
+     */
     public void removeAllHabits() {
 
         SQLiteDatabase db = this.getWritableDatabase();

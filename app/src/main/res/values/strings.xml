@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Habit Tracker</string>
+    <string name="app.message.insert">New elements created with IDs:  %1$s, %2$s and %3$s \n\n</string>
+    <string name="app.message.list.header">CURRENT ELEMENTS\n</string>
+    <string name="app.message.read">ID: %1$s - VALUE: %2$s \n</string>
+    <string name="app.message.update">\n %1$s element(s) updated:\n\n</string>
+    <string name="app.message.name.default">"Run day "</string>
+    <string name="app.message.description.default">Run 5k</string>
+    <string name="app.message.timestamp.default">time(\'now\')</string>
+    <string name="app.message.delete">\n No more values in the table</string>
 </resources>
