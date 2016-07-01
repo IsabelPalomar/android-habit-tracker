@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.provider.BaseColumns;
 
 
@@ -37,8 +38,9 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_HABITS);
     }
 
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //Remove the table (Just for testing purposes)
+        //Delete the table (Just for testing purposes)
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
@@ -87,7 +89,7 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
     /**
      * Delete specific element from a Database
      */
-    public void removeHabit(int rowId) {
+    public void removeHabitById(int rowId) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " LIKE ?";
@@ -97,30 +99,39 @@ public class HabitsDbHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Fetch all habits stored in database
+     * Get all habits stored in database
      */
-    public void showAllHabits() {
+    public Cursor getAllHabits() {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
         String[] projection = {
-                HabitsContract.Habit._ID,
+                HabitsContract.Habit.COLUMN_NAME_HABIT_ID,
                 HabitsContract.Habit.COLUMN_NAME_HABIT,
-                HabitsContract.Habit.COLUMN_NAME_DESCRIPTION,
         };
 
         String sortOrder =
                 HabitsContract.Habit.COLUMN_NAME_HABIT_ID + " DESC";
 
         Cursor c = db.query(
-                HabitsContract.Habit.TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                selection,                                // The columns for the WHERE clause
-                selectionArgs,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
+                HabitsContract.Habit.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                sortOrder
         );
+
+        return c;
+    }
+
+
+    public void removeAllHabits() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(HabitsContract.Habit.TABLE_NAME, "1", null);
+
     }
 }
 

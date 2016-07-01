@@ -1,6 +1,7 @@
 package android.example.com.habittracker;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,12 +33,23 @@ public class MainActivity extends AppCompatActivity {
         int updatedRows = mDbHelper.updateNameById("Run run!", 4);
         dbUpdates.append("\nNew element updated: " + String.valueOf(updatedRows));
 
-        //Remove element in DB
-        mDbHelper.removeHabit(2);
-
         //Show all the elements
-        mDbHelper.showAllHabits();
+        Cursor c = mDbHelper.getAllHabits();
+        if (c.moveToFirst())
+        {
+            do {
+                dbUpdates.append("\n" + c.getString(1) + " has the id " + c.getString(0));
+            } while (c.moveToNext());
+        }
 
+        //Remove element in DB
+        mDbHelper.removeHabitById(1);
+
+
+        //Remove element in DB
+        mDbHelper.removeAllHabits();
+
+        mDbHelper.close();
         tvUpdates.setText(dbUpdates.toString());
 
     }
